@@ -22,13 +22,13 @@ int countOcc(int* arr, int size, int elem){
 
 int main(int argc, char** argv){
     if (argc != 3){
-        perror("numero errato di argomenti");
+        printf("numero errato di argomenti");
         exit(EXIT_FAILURE);
     }
 
-    int numStudents= atoi(argv[1]);
+    int numStudents = atoi(argv[1]);
     if (numStudents <= 0){
-        perror("numero di studenti nulli o negativi");
+        printf("numero di studenti nulli o negativi");
         exit(EXIT_FAILURE);
     }
 
@@ -42,36 +42,35 @@ int main(int argc, char** argv){
     }
     printf("\n");
 
-
     //votoMax+1 processi figli
-    int* figli = (int*) malloc((votoMax + 1) * sizeof(int));
     for (int i = 0; i < votoMax + 1; i++){
-        
         int pid = fork();
-        if (pid > 0)
-            figli[i] = pid;
 
-        else if (pid == 0){ // figlio
+        if (pid == 0){ // figlio
             int occ = countOcc(voti, numStudents, i);
             exit(occ);
         }
-        else{
-            perror("errore creazione processo figlio");
+        else if (pid < 0){
+            printf("errore creazione processo figlio");
             exit(EXIT_FAILURE);
         }
     }
 
+
     //
     for (int i = 0; i < votoMax + 1; i++) {
-        int status;
-        int pid = wait(&status);
-
+        int status; // stato con cui il figlio ha terminato
+        int pid = wait(&status); //pid del figlio terminato
+        if (pid < 0){
+            perror("errore pid");
+            exit(EXIT_FAILURE);
+        }
         if (WIFEXITED(status))
-            printf("pid del figlio: %d con voto %d, terminato con stato (occorrenze) %d\n", pid, i, WEXITSTATUS(status));
+            printf("pid del figlio: %d con voto %d, terminato con stato (occorrenze) %d\n", pid, i, WEXITSTATUS(status)); //status >> 8
         else
-            fprintf(stderr, "figlio %d terminato in modo anormale\n", pid);
+            fprintf(stderr, "figlio %d terminato in modo anomalo per segnale: %d\n",pid, WTERMSIG(status));
     }
+    
     free(voti);
-    free(figli);
     return 0;
 }
