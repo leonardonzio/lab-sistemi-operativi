@@ -6,7 +6,7 @@
 int main(int argc, char** argv){    
     
     if (argc != 3){
-        printf("numero di argometni errato\n");
+        perror("numero di argomenti errato\n");
         exit(EXIT_FAILURE);
     }
 
@@ -16,14 +16,18 @@ int main(int argc, char** argv){
         return 1;
     }
     else if (pid == 0){
-        execl("/usr/bin/grep", "grep", "-c", argv[2], argv[1], (char*) NULL);
-        perror("errore in execl");
+        execp("grep", "grep", "-c", argv[2], argv[1], (char*) NULL);
+        perror("errore in execp");
     }
     else {
         int status;
-        wait(&status);
-
-        if (WIFEXITED(status))
+        int isWaitOk = wait(&status);
+        if (!isWaitOk){
+            perror("errore wait");
+            exit(EXIT_FAILURE);
+        } 
+        
+        else if (WIFEXITED(status))
             printf("figlio %d terminato volontariamente con stato %d\n", pid, WEXITSTATUS(status));
         else
             fprintf(stderr, "figlio %d terminato in modo anomalo per segnale: %d\n",pid, WTERMSIG(status));
