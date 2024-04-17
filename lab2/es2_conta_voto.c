@@ -16,7 +16,7 @@ int main(int argc, char** argv){
         return 1;
     }
     else if (pid == 0){
-        execp("grep", "grep", "-c", argv[2], argv[1], (char*) NULL);
+        execlp("grep", "grep", "-c", argv[2], argv[1], (char*) NULL);
         perror("errore in execp");
     }
     else {

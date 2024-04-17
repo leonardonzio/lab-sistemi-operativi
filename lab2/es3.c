@@ -22,11 +22,11 @@ int main(int argc, char** argv){
         
         if (pid == 0){
             if (getpid() % 2 == 0){
-                execp("cp", "cp", argv[indexFile], argv[2], (char*)NULL);
+                execlp("cp", "cp", argv[indexFile], argv[2], (char*)NULL);
                 perror("errore in eseguire cp");
             }
             else {
-                execp("rm", "rm", strcat(argv[1], argv[indexFile]), (char*)NULL);
+                execlp("rm", "rm", strcat(argv[1], argv[indexFile]), (char*)NULL);
                 perror("errore in eseguire rm");
             }
         }
@@ -53,7 +53,7 @@ int main(int argc, char** argv){
         }
     }
 
-    execp("ls", "ls", "-A", argv[2], (char*)NULL);
+    execlp("ls", "ls", "-A", argv[2], (char*)NULL);
     return 0;
 
     //./es3 /home/oel/Desktop/so-lab/lab2/dir1/ /home/oel/Desktop/so-lab/lab2/dir2/ a.txt b.txt c.txt d.txt e.txt f.txt g.txt
