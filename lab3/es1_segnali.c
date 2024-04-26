@@ -5,35 +5,31 @@
 #include <signal.h>
 
 int p1 = 0, p2 = 0;
-
-
-void handl(int signum){
-
-    if (signum == SIGUSR1){
-
-        printf("Finito!\n");
-        kill(, int sig)
-
-
-    }
-
-}
+int numFigliTerminati = 0;
 
 void sigusr1_handler(int signum){
     
-    printf("Finito!\n");
     kill(p1, SIGKILL);
     kill(p2, SIGKILL);
-    
+    printf("Finito!\n");
+
     exit(EXIT_SUCCESS);
 }
 
 void sigusr2_handler(int signum){
-    
-    execlp("date", "date", (char) 0);
+
+    //perche in questo momento sono il padre, e io lo voglio mandare a p2    
+    kill(p2, SIGUSR2);
 }
 
+void sigchld_handler(int signum){
 
+    numFigliTerminati++;
+}
+
+void sigusr2_p2_handler(int signum){
+    execlp("date", "date", (char*) 0);
+}
 
 int main(int argc, char** argv){
 
@@ -41,6 +37,7 @@ int main(int argc, char** argv){
         perror("errore argomenti\n");
         exit(EXIT_FAILURE);
     }
+    
     int T = atoi(argv[1]);
     if (T <= 0){
         perror("T deve essere positivo");
@@ -50,12 +47,16 @@ int main(int argc, char** argv){
     
     signal(SIGUSR1, sigusr1_handler);
     signal(SIGUSR2, sigusr2_handler);
+    signal(SIGCHLD, sigchld_handler);
 
     p1 = fork();
     if (p1 == 0){
         
         sleep(3);
         int moneta = rand() % 2;
+        
+        //sigusr1 lo voglio mandare a P0, sigusr2 lo voglio mandare a p2
+        //in ogni caso lo invio al padre e lui gestisce
         kill(getppid(), (moneta == 0) ? SIGUSR1 : SIGUSR2);
 
         exit(EXIT_SUCCESS);
@@ -70,28 +71,28 @@ int main(int argc, char** argv){
     //p2
     if (p2 == 0){
     
-
+        signal(SIGUSR2, sigusr2_p2_handler);
+        pause();
+        exit(EXIT_SUCCESS);
 
     }
     else if (p2 < 0){
-
+        perror("errore fork\n");
+        exit(1);
     }
 
+
     //P0
-    int count = 0;
-	while(1){
-		printf("P0 (PID=%d): attendo il segnale da %d secondi\n", getpid(), count++);
+	for (int i = 0; i < T && numFigliTerminati != 2; i++) {
+        
+        printf("P0 (PID=%d): attendo il segnale da %d secondi\n", getpid(), i);
         sleep(1);
-	}
+    }
 
+    if (numFigliTerminati == 2) printf("Figli terminati!\n");
+    else                        printf("Timeout scaduto!\n");
+		
 
-
-
-
-
-
-
-
-
+    return 0;
 }
 
