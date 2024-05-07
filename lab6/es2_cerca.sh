@@ -19,6 +19,7 @@ i=3
 max_c=0
 max_name=""
 n_files=0
+#fino a che non arrivo all'ultimo direttorio
 while [[ "$i" -le "$#" ]]; do
 	
 	d="${!i}"
@@ -29,13 +30,16 @@ while [[ "$i" -le "$#" ]]; do
 	#ispeziono
 	for f in $d/*; do
 		
+		#salto direttori o file non dell'utente
 		if [[ "$(stat -c %U $f)" != "$USER" || -d "$f" ]]; then
 			continue
 		fi
 
+		#traccio numero file ispezionati
 		((n_files++))
-		last_n_lines=$(tail -n $N "$f")
-		curr_c=$(echo -n "$last_n_lines" | wc -c)
+
+		#conto caratteri delle ultime N righe
+		curr_c=$(tail -n $N "$f" | wc -c | awk '{print $1}')
 		
 		if [[ curr_c -gt max_c ]]; then
 			max_c=$curr_c
@@ -43,6 +47,7 @@ while [[ "$i" -le "$#" ]]; do
 		fi
 	done
 
+	#avanzo l'indice del direttorio
 	((i++))
 done
 
