@@ -6,7 +6,7 @@ fi
 
 M=$1
 S=$2
-filedir=$3
+filedir="$3"
 if [[ "$filedir" != /* || ! -r "$filedir" ]]; then
 	echo "il terzo argomento deve essere un path assoluto, leggibile ed esistente"; exit 1
 fi
@@ -18,12 +18,10 @@ for dir in $(cat "$filedir"); do
     for f in $dir/*; do
 
         #salto se sono direttori
-        if [[ -d "$f" ]]; then
-			continue
-		fi
+        if [[ -d "$f" ]]; then continue; fi
         
         #se le occorrenze di S nel file f sono > di M, allora stampo la sua dimensione in bytes
-        S_occ=$(grep -c $S $f)
+        S_occ=$(grep -c $S "$f")
         if [[ $S_occ -gt $M ]]; then
             echo "Il file $f nella directory $dir contiene $(stat -c %s $f) caratteri"
         fi
