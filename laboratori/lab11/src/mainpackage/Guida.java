@@ -12,7 +12,7 @@ public class Guida extends Thread{
 
 		this.m = m;
 		this.r = r;
-		this.quanteVolte = r.nextInt(20) + 1;
+		this.quanteVolte = r.nextInt(10) + 1;
 	}
 	
 	@Override

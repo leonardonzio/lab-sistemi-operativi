@@ -47,9 +47,12 @@ public class Monitor {
 		Arrays.fill(sospP, 0);
 		Arrays.fill(sospG, 0);
 		
-		Arrays.fill(codaS, l.newCondition());
-		Arrays.fill(codaP, l.newCondition());
-		Arrays.fill(codaG, l.newCondition());
+		for (int i = 0; i < 2; i++) {
+			codaS[i] = l.newCondition();
+			codaP[i] = l.newCondition();
+			codaG[i] = l.newCondition();
+		}
+		
 	}
 	
 	private boolean prioritaUscita() {
