@@ -34,15 +34,18 @@ public class Main {
 		for (Passeggino p : passeggini)
 			p.start();
 		
-		
-		for (Guida g : guide)
-			g.join();
 		for (Singolo s : singoli) 
 			s.join();
 		for (Passeggino p : passeggini)
 			p.join();
+		
+		for (Guida g : guide)
+			g.interrupt();
+		
+		for (Guida g : guide)
+			g.join();
 
-		System.out.println("testo per verificare se ha terminato");
+		System.out.println("programma terminato");
 		
 	}
 
