@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <ctype.h>
 
 int p1, p2;
 void handl_timeout(int signum){
